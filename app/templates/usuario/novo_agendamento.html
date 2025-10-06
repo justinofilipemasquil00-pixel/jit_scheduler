@@ -1,0 +1,176 @@
+{% extends "base.html" %} 
+{% block title %}Novo Agendamento - Sistema JIT{% endblock %} 
+ 
+{% block content %} 
+<div class="row"> 
+    <div class="col-md-8 mx-auto"> 
+        <div class="card"> 
+            <div class="card-header"> 
+                <h4><i class="fas fa-plus"></i> Novo Agendamento</h4> 
+            </div> 
+            <div class="card-body"> 
+                <form method="POST"> 
+                    {{ form.hidden_tag() }} 
+ 
+                    <div class="row"> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.doca_id.label(class="form-label") }} 
+                                {{ form.doca_id(class="form-select") }} 
+                            </div> 
+                        </div> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.data_agendamento.label(class="form-label") }} 
+                                {{ form.data_agendamento(class="form-control") }}
+                                <div class="form-text">
+                                    <i class="fas fa-calendar-alt"></i> Clique no campo para selecionar data e hora
+                                </div>
+                            </div> 
+                        </div> 
+                    </div> 
+ 
+                    <div class="row"> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.duracao_estimada.label(class="form-label") }} 
+                                {{ form.duracao_estimada(class="form-control") }} 
+                            </div> 
+                        </div> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.tipo_operacao.label(class="form-label") }} 
+                                {{ form.tipo_operacao(class="form-select") }} 
+                            </div> 
+                        </div> 
+                    </div> 
+ 
+                    <div class="row"> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.tipo_carga.label(class="form-label") }} 
+                                {{ form.tipo_carga(class="form-select") }} 
+                            </div> 
+                        </div> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.placa_veiculo.label(class="form-label") }} 
+                                {{ form.placa_veiculo(class="form-control", placeholder="ABC1D23") }} 
+                            </div> 
+                        </div> 
+                    </div> 
+ 
+                    <div class="row"> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.nome_motorista.label(class="form-label") }} 
+                                {{ form.nome_motorista(class="form-control") }} 
+                            </div> 
+                        </div> 
+                        <div class="col-md-6"> 
+                            <div class="mb-3"> 
+                                {{ form.telefone_motorista.label(class="form-label") }} 
+                                {{ form.telefone_motorista(class="form-control", placeholder="(11) 99999-9999") }} 
+                            </div> 
+                        </div> 
+                    </div> 
+ 
+                    <div class="mb-3"> 
+                        {{ form.observacoes.label(class="form-label") }} 
+                        {{ form.observacoes(class="form-control", rows=3) }} 
+                    </div> 
+ 
+                    <div class="d-grid"> 
+                        {{ form.submit(class="btn btn-primary btn-lg") }} 
+                    </div> 
+                </form> 
+            </div> 
+        </div> 
+    </div> 
+</div> 
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // Inicializar Flatpickr
+    flatpickr("#datetimepicker", {
+        enableTime: true,
+        dateFormat: "Y-m-d H:i",
+        time_24hr: true,
+        locale: "pt",
+        minuteIncrement: 15,
+        minDate: "today",
+        disable: [
+            function(date) {
+                // Desabilita fins de semana (domingo = 0, sábado = 6)
+                return (date.getDay() === 0 || date.getDay() === 6);
+            }
+        ],
+        // Horário comercial (7h às 19h)
+        minTime: "07:00",
+        maxTime: "19:00",
+        // Configurações de tradução
+        "locale": {
+            "firstDayOfWeek": 1, // Segunda-feira
+            "weekdays": {
+                "shorthand": ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
+                "longhand": ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"]
+            },
+            "months": {
+                "shorthand": ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
+                "longhand": ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"]
+            }
+        },
+        // Placeholder customizado
+        onChange: function(selectedDates, dateStr, instance) {
+            if (dateStr) {
+                instance.input.placeholder = dateStr;
+            }
+        },
+        onReady: function(selectedDates, dateStr, instance) {
+            // Adiciona ícone de calendário visualmente
+            instance.calendarContainer.classList.add('flatpickr-custom');
+        }
+    });
+</script>
+
+<style>
+    .flatpickr-calendar {
+        background: white;
+        border: 1px solid #dee2e6;
+        border-radius: 0.375rem;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    
+    .flatpickr-day.selected {
+        background: #0d6efd;
+        border-color: #0d6efd;
+    }
+    
+    .flatpickr-day.today {
+        border-color: #0d6efd;
+    }
+    
+    .flatpickr-time input:hover {
+        background: #e9ecef;
+    }
+    
+    .flatpickr-time .flatpickr-am-pm:hover,
+    .flatpickr-time .flatpickr-time-separator:hover,
+    .flatpickr-time .flatpickr-hour:hover,
+    .flatpickr-time .flatpickr-minute:hover {
+        background: #e9ecef;
+    }
+    
+    .form-text {
+        font-size: 0.875em;
+        color: #6c757d;
+        margin-top: 0.25rem;
+    }
+    
+    .form-text i {
+        margin-right: 0.25rem;
+    }
+</style>
+{% endblock %}

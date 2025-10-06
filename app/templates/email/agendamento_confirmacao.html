@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #007bff; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background: #f8f9fa; padding: 20px; }
+        .details { background: white; padding: 15px; border-left: 4px solid #007bff; margin: 15px 0; border-radius: 4px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 0.9em; background: white; border-radius: 0 0 5px 5px; }
+        .info-box { background: #fff3cd; padding: 15px; border-radius: 5px; margin: 15px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✅ Agendamento Confirmado</h1>
+        </div>
+        
+        <div class="content">
+            <p>Prezado(a) <strong>{{ agendamento.usuario.nome }}</strong>,</p>
+            
+            <p>Seu agendamento foi <strong>confirmado</strong> com sucesso!</p>
+            
+            <div class="details">
+                <h3 style="margin-top: 0; color: #007bff;">📋 Detalhes do Agendamento</h3>
+                <p><strong>📍 Doca:</strong> {{ agendamento.doca.numero }} - {{ agendamento.doca.terminal.nome }}</p>
+                <p><strong>📅 Data e Hora:</strong> {{ agendamento.data_agendamento.strftime('%d/%m/%Y às %H:%M') }}</p>
+                <p><strong>⏱️ Duração:</strong> {{ agendamento.duracao_estimada }} minutos</p>
+                <p><strong>🔧 Tipo de Operação:</strong> {{ agendamento.tipo_operacao.title() }}</p>
+                <p><strong>🚚 Veículo:</strong> {{ agendamento.placa_veiculo }}</p>
+                <p><strong>👤 Motorista:</strong> {{ agendamento.nome_motorista }}</p>
+                {% if agendamento.observacoes %}
+                <p><strong>📝 Observações:</strong> {{ agendamento.observacoes }}</p>
+                {% endif %}
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Informações Importantes:</strong>
+                <ul style="margin-bottom: 0;">
+                    <li>Apresente-se no terminal com <strong>15 minutos de antecedência</strong></li>
+                    <li>Traga documentação do veículo e motorista</li>
+                    <li>Em caso de atraso, entre em contato com o terminal</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Atenciosamente,<br>
+            <strong>Equipe Sistema JIT</strong></p>
+            <p><small>Este é um email automático, por favor não responda.</small></p>
+        </div>
+    </div>
+</body>
+</html>

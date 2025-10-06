@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #6c757d; color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background: #f8f9fa; padding: 20px; }
+        .details { background: white; padding: 15px; border-left: 4px solid #6c757d; margin: 15px 0; border-radius: 4px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 0.9em; background: white; border-radius: 0 0 5px 5px; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⏸️ Agendamento Rejeitado</h1>
+        </div>
+        
+        <div class="content">
+            <p>Prezado(a) <strong>{{ agendamento.usuario.nome }}</strong>,</p>
+            
+            <p>Informamos que seu agendamento foi <strong>rejeitado</strong>.</p>
+            
+            <div class="details">
+                <h3 style="margin-top: 0; color: #6c757d;">📋 Detalhes do Agendamento Rejeitado</h3>
+                <p><strong>📍 Doca:</strong> {{ agendamento.doca.numero }} - {{ agendamento.doca.terminal.nome }}</p>
+                <p><strong>📅 Data e Hora:</strong> {{ agendamento.data_agendamento.strftime('%d/%m/%Y às %H:%M') }}</p>
+                <p><strong>🚚 Veículo:</strong> {{ agendamento.placa_veiculo }}</p>
+                <p><strong>👤 Motorista:</strong> {{ agendamento.nome_motorista }}</p>
+            </div>
+            
+            <p>Para mais informações sobre o motivo da rejeição ou para fazer um novo agendamento, entre em contato conosco.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="#" class="btn">📅 Fazer Novo Agendamento</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Atenciosamente,<br>
+            <strong>Equipe Sistema JIT</strong></p>
+            <p><small>Este é um email automático, por favor não responda.</small></p>
+        </div>
+    </div>
+</body>
+</html>

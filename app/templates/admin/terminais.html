@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Gerenciar Terminais - Sistema JIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-warehouse"></i> Gerenciar Terminais</h1>
+            <a href="{{ url_for('admin.novo_terminal') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Novo Terminal
+            </a>
+        </div>
+
+        {% if terminais %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Endereço</th>
+                                <th>Telefone</th>
+                                <th>Horário</th>
+                                <th>Docas</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for terminal in terminais %}
+                            <tr>
+                                <td>
+                                    <strong>{{ terminal.nome }}</strong>
+                                    <br>
+                                    <small class="text-muted">Criado em: {{ terminal.data_criacao.strftime('%d/%m/%Y') }}</small>
+                                </td>
+                                <td>{{ terminal.endereco }}</td>
+                                <td>{{ terminal.telefone or 'Não informado' }}</td>
+                                <td>
+                                    {{ terminal.horario_abertura.strftime('%H:%M') }} - {{ terminal.horario_fechamento.strftime('%H:%M') }}
+                                </td>
+                                <td>
+                                    <span class="badge bg-info">{{ terminal.docas|length }} doca(s)</span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="{{ url_for('admin.editar_terminal', id=terminal.id) }}" 
+                                           class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <form method="POST" 
+                                              action="{{ url_for('admin.excluir_terminal', id=terminal.id) }}" 
+                                              style="display: inline;"
+                                              onsubmit="return confirm('Tem certeza que deseja excluir este terminal? Todas as docas associadas também serão excluídas.');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-warehouse fa-3x text-muted mb-3"></i>
+            <h4>Nenhum terminal cadastrado</h4>
+            <p class="text-muted">Comece cadastrando o primeiro terminal do sistema.</p>
+            <a href="{{ url_for('admin.novo_terminal') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Cadastrar Primeiro Terminal
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

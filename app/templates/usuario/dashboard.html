@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Painel - Sistema JIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="mb-4"><i class="fas fa-tachometer-alt"></i> Meu Painel</h1>
+        <p class="lead">Bem-vindo ao seu painel de agendamentos</p>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-3">
+        <div class="card text-white bg-primary">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Agendamentos Hoje</h5>
+                        <h3>{{ agendamentos_hoje }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-calendar-day fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-success">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Confirmados</h5>
+                        <h3>{{ agendamentos_confirmados }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-check-circle fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-warning">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Pendentes</h5>
+                        <h3>{{ agendamentos_pendentes }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-clock fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card text-white bg-info">
+            <div class="card-body">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <h5>Total</h5>
+                        <h3>{{ total_agendamentos }}</h3>
+                    </div>
+                    <div class="align-self-center">
+                        <i class="fas fa-list-alt fa-2x"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock"></i> Próximos Agendamentos</h5>
+            </div>
+            <div class="card-body">
+                {% if proximos_agendamentos %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Data/Hora</th>
+                                <th>Doca</th>
+                                <th>Operação</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for agendamento in proximos_agendamentos %}
+                            <tr>
+                                <td>{{ agendamento.data_agendamento.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ agendamento.doca.terminal.nome }} - Doca {{ agendamento.doca.numero }}</td>
+                                <td>{{ agendamento.tipo_operacao }}</td>
+                                <td>
+                                    {% if agendamento.status == 'confirmado' %}
+                                        <span class="badge bg-success">Confirmado</span>
+                                    {% elif agendamento.status == 'pendente' %}
+                                        <span class="badge bg-warning">Pendente</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">{{ agendamento.status }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted">Nenhum agendamento encontrado.</p>
+                <a href="{{ url_for('usuario.novo_agendamento') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Novo Agendamento
+                </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-rocket"></i> Ações Rápidas</h5>
+            </div>
+            <div class="card-body">
+                <a href="{{ url_for('usuario.novo_agendamento') }}" class="btn btn-outline-primary btn-block mb-2">
+                    <i class="fas fa-plus"></i> Novo Agendamento
+                </a>
+                <a href="{{ url_for('usuario.agendamentos') }}" class="btn btn-outline-secondary btn-block mb-2">
+                    <i class="fas fa-list"></i> Ver Todos
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

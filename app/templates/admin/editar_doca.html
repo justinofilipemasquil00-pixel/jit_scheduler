@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+{% block title %}Editar Doca - Sistema JIT{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-edit"></i> Editar Doca
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="terminal_id" class="form-label">Terminal *</label>
+                                <select class="form-select" id="terminal_id" name="terminal_id" required>
+                                    <option value="">Selecione um terminal</option>
+                                    {% for terminal in terminais %}
+                                    <option value="{{ terminal.id }}" 
+                                            {% if doca.terminal_id == terminal.id %}selected{% endif %}>
+                                        {{ terminal.nome }}
+                                    </option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="numero" class="form-label">Número da Doca *</label>
+                                <input type="text" class="form-control" id="numero" name="numero" 
+                                       value="{{ doca.numero }}" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="tipo_carga" class="form-label">Tipo de Carga</label>
+                                <select class="form-select" id="tipo_carga" name="tipo_carga">
+                                    <option value="geral" {% if doca.tipo_carga == 'geral' %}selected{% endif %}>Geral</option>
+                                    <option value="container" {% if doca.tipo_carga == 'container' %}selected{% endif %}>Container</option>
+                                    <option value="granel" {% if doca.tipo_carga == 'granel' %}selected{% endif %}>Granel</option>
+                                    <option value="frigorificada" {% if doca.tipo_carga == 'frigorificada' %}selected{% endif %}>Frigorificada</option>
+                                    <option value="perigosa" {% if doca.tipo_carga == 'perigosa' %}selected{% endif %}>Perigosa</option>
+                                    <option value="fragil" {% if doca.tipo_carga == 'fragil' %}selected{% endif %}>Frágil</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status">
+                                    <option value="ativa" {% if doca.status == 'ativa' %}selected{% endif %}>Ativa</option>
+                                    <option value="inativa" {% if doca.status == 'inativa' %}selected{% endif %}>Inativa</option>
+                                    <option value="manutencao" {% if doca.status == 'manutencao' %}selected{% endif %}>Manutenção</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('admin.docas') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Atualizar Doca
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Card com estatísticas da doca -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-bar"></i> Estatísticas da Doca
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 class="text-primary">{{ doca.agendamentos|length }}</h3>
+                            <p class="text-muted mb-0">Total Agendamentos</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 class="text-success">
+                                {% set confirmados = doca.agendamentos|selectattr('status', 'equalto', 'confirmado')|list %}
+                                {{ confirmados|length }}
+                            </h3>
+                            <p class="text-muted mb-0">Confirmados</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 class="text-warning">
+                                {% set pendentes = doca.agendamentos|selectattr('status', 'equalto', 'pendente')|list %}
+                                {{ pendentes|length }}
+                            </h3>
+                            <p class="text-muted mb-0">Pendentes</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card">
+                            <h3 class="text-info">
+                                {{ doca.data_criacao.strftime('%d/%m/%Y') }}
+                            </h3>
+                            <p class="text-muted mb-0">Cadastrada em</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

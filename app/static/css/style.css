@@ -1,0 +1,16 @@
+body { 
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+} 
+ 
+.navbar-brand { 
+    font-weight: bold; 
+} 
+ 
+.card { 
+    transition: transform 0.2s; 
+    height: 100%; 
+} 
+ 
+.card:hover { 
+    transform: translateY(-5px); 
+} 

@@ -1,0 +1,82 @@
+{% extends "base.html" %} 
+{% block title %}Gerenciar Agendamentos - Sistema JIT{% endblock %} 
+ 
+{% block content %} 
+<div class="row"> 
+    <div class="col-md-12"> 
+        <div class="d-flex justify-content-between align-items-center mb-4"> 
+            <h1><i class="fas fa-tasks"></i> Gerenciar Agendamentos</h1> 
+            <div class="btn-group"> 
+                <a href="{{ url_for('admin.agendamentos', status='todos') }}" class="btn btn-outline-primary {% if status_filter == 'todos' %}active{% endif %}">Todos</a> 
+                <a href="{{ url_for('admin.agendamentos', status='pendente') }}" class="btn btn-outline-warning {% if status_filter == 'pendente' %}active{% endif %}">Pendentes</a> 
+                <a href="{{ url_for('admin.agendamentos', status='confirmado') }}" class="btn btn-outline-success {% if status_filter == 'confirmado' %}active{% endif %}">Confirmados</a> 
+                <a href="{{ url_for('admin.agendamentos', status='cancelado') }}" class="btn btn-outline-danger {% if status_filter == 'cancelado' %}active{% endif %}">Cancelados</a> 
+            </div> 
+        </div> 
+ 
+        {% if agendamentos %} 
+        <div class="card"> 
+            <div class="card-body"> 
+                <div class="table-responsive"> 
+                    <table class="table table-striped"> 
+                        <thead> 
+                            <tr> 
+                                <th>ID</th> 
+                                <th>Data/Hora</th> 
+                                <th>Usuario</th> 
+                                <th>Doca</th> 
+                                <th>Operacao</th> 
+                                <th>Veiculo</th> 
+                                <th>Status</th> 
+                                <th>Acoes</th> 
+                            </tr> 
+                        </thead> 
+                        <tbody> 
+                            {% for agendamento in agendamentos %} 
+                            <tr> 
+                                <td>{{ agendamento.id }}</td> 
+                                <td>{{ agendamento.data_agendamento.strftime('%d/%m/%Y %H:%M') }}</td> 
+                                <td>{{ agendamento.usuario.nome }}<br><small class="text-muted">{{ agendamento.usuario.empresa }}</small></td> 
+                                <td>{{ agendamento.doca.terminal.nome }} - Doca {{ agendamento.doca.numero }}</td> 
+                                <td>{{ agendamento.tipo_operacao }}</td> 
+                                <td>{{ agendamento.placa_veiculo }}<br><small class="text-muted">{{ agendamento.nome_motorista }}</small></td> 
+                                <td> 
+                                    {% if agendamento.status == 'confirmado' %} 
+                                        <span class="badge bg-success">Confirmado</span> 
+                                    {% elif agendamento.status == 'pendente' %} 
+                                        <span class="badge bg-warning">Pendente</span> 
+                                    {% elif agendamento.status == 'cancelado' %} 
+                                        <span class="badge bg-danger">Cancelado</span> 
+                                    {% else %} 
+                                        <span class="badge bg-secondary">{{ agendamento.status }}</span> 
+                                    {% endif %} 
+                                </td> 
+                                <td> 
+                                    {% if agendamento.status == 'pendente' %} 
+                                        <form method="POST" action="{{ url_for('admin.aprovar_agendamento', id=agendamento.id) }}" style="display: inline;"> 
+                                            <button type="submit" class="btn btn-sm btn-success">Aprovar</button> 
+                                        </form> 
+                                        <form method="POST" action="{{ url_for('admin.rejeitar_agendamento', id=agendamento.id) }}" style="display: inline;"> 
+                                            <button type="submit" class="btn btn-sm btn-danger">Rejeitar</button> 
+                                        </form> 
+                                    {% else %} 
+                                        <span class="text-muted">Nenhuma acao</span> 
+                                    {% endif %} 
+                                </td> 
+                            </tr> 
+                            {% endfor %} 
+                        </tbody> 
+                    </table> 
+                </div> 
+            </div> 
+        </div> 
+        {% else %} 
+        <div class="text-center py-5"> 
+            <i class="fas fa-calendar-times fa-3x text-muted mb-3"></i> 
+            <h4>Nenhum agendamento encontrado</h4> 
+            <p class="text-muted">Nao ha agendamentos com o filtro selecionado.</p> 
+        </div> 
+        {% endif %} 
+    </div> 
+</div> 
+{% endblock %} 

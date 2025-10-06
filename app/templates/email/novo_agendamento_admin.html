@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+        .header { background: #ffc107; color: #333; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }
+        .content { background: #f8f9fa; padding: 20px; }
+        .details { background: white; padding: 15px; border-left: 4px solid #ffc107; margin: 15px 0; border-radius: 4px; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 0.9em; background: white; border-radius: 0 0 5px 5px; }
+        .btn { background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📥 Novo Agendamento Pendente</h1>
+        </div>
+        
+        <div class="content">
+            <p>Prezado Administrador,</p>
+            
+            <p>Um novo agendamento está <strong>pendente de aprovação</strong> no sistema.</p>
+            
+            <div class="details">
+                <h3 style="margin-top: 0; color: #ffc107;">📋 Detalhes do Agendamento</h3>
+                <p><strong>👤 Usuário:</strong> {{ agendamento.usuario.nome }} ({{ agendamento.usuario.email }})</p>
+                <p><strong>🏢 Empresa:</strong> {{ agendamento.usuario.empresa }}</p>
+                <p><strong>📍 Doca:</strong> {{ agendamento.doca.numero }} - {{ agendamento.doca.terminal.nome }}</p>
+                <p><strong>📅 Data e Hora:</strong> {{ agendamento.data_agendamento.strftime('%d/%m/%Y às %H:%M') }}</p>
+                <p><strong>⏱️ Duração:</strong> {{ agendamento.duracao_estimada }} minutos</p>
+                <p><strong>🔧 Tipo de Operação:</strong> {{ agendamento.tipo_operacao.title() }}</p>
+                <p><strong>🚚 Veículo:</strong> {{ agendamento.placa_veiculo }}</p>
+                <p><strong>👤 Motorista:</strong> {{ agendamento.nome_motorista }}</p>
+                {% if agendamento.observacoes %}
+                <p><strong>📝 Observações:</strong> {{ agendamento.observacoes }}</p>
+                {% endif %}
+            </div>
+            
+            <p>Acesse o sistema para aprovar ou rejeitar este agendamento:</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <a href="#" class="btn">⚙️ Gerenciar Agendamentos</a>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Atenciosamente,<br>
+            <strong>Sistema JIT - Notificação Automática</strong></p>
+        </div>
+    </div>
+</body>
+</html>
