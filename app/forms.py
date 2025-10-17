@@ -235,3 +235,137 @@ class AlterarSenhaForm(FlaskForm):
                                    })
     submit = SubmitField('Alterar Senha',
                         render_kw={"class": "btn btn-warning"})
+
+# FORMULÁRIO PARA COMPLETAR PERFIL OBRIGATÓRIO - ACESSO TOTAL
+class CompletarPerfilForm(FlaskForm):
+    # Dados Pessoais (Obrigatórios)
+    telefone = StringField('Telefone *',
+                          validators=[DataRequired()],
+                          render_kw={
+                              "placeholder": "+258 84 123 4567",
+                              "class": "form-control",
+                              "required": "true"
+                          })
+    nuit = StringField('NUIT Pessoal *',
+                      validators=[DataRequired(), Length(min=9, max=9)],
+                      render_kw={
+                          "placeholder": "123456789 (9 dígitos)",
+                          "class": "form-control",
+                          "required": "true"
+                      })
+    genero = SelectField('Gênero *',
+                        validators=[DataRequired()],
+                        choices=[
+                            ('', 'Selecione o gênero *'),
+                            ('masculino', 'Masculino'),
+                            ('feminino', 'Feminino'),
+                            ('outro', 'Outro')
+                        ],
+                        render_kw={
+                            "class": "form-control",
+                            "required": "true"
+                        })
+    data_nascimento = DateField('Data de Nascimento *',
+                               validators=[DataRequired()],
+                               format='%Y-%m-%d',
+                               render_kw={
+                                   "class": "form-control",
+                                   "type": "date",
+                                   "required": "true"
+                               })
+    
+    # Dados Profissionais (Obrigatórios)
+    cargo = StringField('Cargo/Função *',
+                       validators=[DataRequired()],
+                       render_kw={
+                           "placeholder": "Gestor Logístico, Operador, etc.",
+                           "class": "form-control",
+                           "required": "true"
+                       })
+    departamento = StringField('Departamento *',
+                              validators=[DataRequired()],
+                              render_kw={
+                                  "placeholder": "Logística, Compras, Distribuição",
+                                  "class": "form-control",
+                                  "required": "true"
+                              })
+    tipo_empresa = SelectField('Tipo de Empresa *',
+                              validators=[DataRequired()],
+                              choices=[
+                                  ('', 'Selecione o tipo de empresa *'),
+                                  ('importadora', 'Importadora'),
+                                  ('exportadora', 'Exportadora'),
+                                  ('transportadora', 'Transportadora'),
+                                  ('comercio', 'Comércio'),
+                                  ('industria', 'Indústria'),
+                                  ('outro', 'Outro')
+                              ],
+                              render_kw={
+                                  "class": "form-control",
+                                  "required": "true"
+                              })
+    nuit_empresa = StringField('NUIT da Empresa *',
+                              validators=[DataRequired(), Length(min=9, max=9)],
+                              render_kw={
+                                  "placeholder": "123456789 (9 dígitos)",
+                                  "class": "form-control",
+                                  "required": "true"
+                              })
+    
+    # Dados Geográficos (Obrigatórios)
+    provincia = SelectField('Província *',
+                           validators=[DataRequired()],
+                           choices=[
+                               ('', 'Selecione a província *'),
+                               ('maputo', 'Maputo'),
+                               ('gaza', 'Gaza'),
+                               ('inhambane', 'Inhambane'),
+                               ('sofala', 'Sofala'),
+                               ('manica', 'Manica'),
+                               ('tete', 'Tete'),
+                               ('zambezia', 'Zambézia'),
+                               ('nampula', 'Nampula'),
+                               ('cabo_delgado', 'Cabo Delgado'),
+                               ('niassa', 'Niassa')
+                           ],
+                           render_kw={
+                               "class": "form-control",
+                               "required": "true"
+                           })
+    cidade = StringField('Cidade *',
+                        validators=[DataRequired()],
+                        render_kw={
+                            "placeholder": "Maputo, Matola, Beira, etc.",
+                            "class": "form-control",
+                            "required": "true"
+                        })
+    bairro = StringField('Bairro *',
+                        validators=[DataRequired()],
+                        render_kw={
+                            "placeholder": "Nome do bairro",
+                            "class": "form-control",
+                            "required": "true"
+                        })
+    endereco_completo = TextAreaField('Endereço Completo *',
+                                     validators=[DataRequired()],
+                                     render_kw={
+                                         "rows": 3,
+                                         "placeholder": "Endereço completo para referência",
+                                         "class": "form-control",
+                                         "required": "true"
+                                     })
+    
+    # Contatos Adicionais (Opcionais)
+    telefone_alternativo = StringField('Telefone Alternativo',
+                                      render_kw={
+                                          "placeholder": "+258 86 123 4567",
+                                          "class": "form-control"
+                                      })
+    whatsapp = StringField('WhatsApp',
+                          render_kw={
+                              "placeholder": "+258 84 123 4567",
+                              "class": "form-control"
+                          })
+    
+    submit = SubmitField('Completar Perfil e Ativar Acesso Total',
+                        render_kw={"class": "btn btn-success btn-lg"})    

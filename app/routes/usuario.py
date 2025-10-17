@@ -1,16 +1,67 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
 from app.models import Agendamento, Doca, User
-from app.forms import AgendamentoForm, CancelamentoForm, EditarPerfilForm, AlterarSenhaForm
+from app.forms import AgendamentoForm, CancelamentoForm, EditarPerfilForm, AlterarSenhaForm, CompletarPerfilForm
 from app import db
 from datetime import datetime, timedelta
 from app.email import send_agendamento_cancelamento, send_novo_agendamento_admin
 
 usuario_bp = Blueprint('usuario', __name__)
 
+# ROTA PARA COMPLETAR PERFIL OBRIGATÓRIO - APENAS UMA VEZ
+@usuario_bp.route('/completar-perfil', methods=['GET', 'POST'])
+@login_required
+def completar_perfil():
+    """Rota para completar perfil obrigatório - acesso total"""
+    # Se já tem acesso completo, redireciona
+    if current_user.tem_acesso_completo():
+        flash('Seu perfil já está completo!', 'info')
+        return redirect(url_for('usuario.dashboard'))
+    
+    form = CompletarPerfilForm()
+    
+    if form.validate_on_submit():
+        try:
+            # Atualizar dados obrigatórios
+            current_user.telefone = form.telefone.data
+            current_user.nuit = form.nuit.data
+            current_user.genero = form.genero.data
+            current_user.data_nascimento = form.data_nascimento.data
+            current_user.cargo = form.cargo.data
+            current_user.departamento = form.departamento.data
+            current_user.tipo_empresa = form.tipo_empresa.data
+            current_user.nuit_empresa = form.nuit_empresa.data
+            current_user.provincia = form.provincia.data
+            current_user.cidade = form.cidade.data
+            current_user.bairro = form.bairro.data
+            current_user.endereco_completo = form.endereco_completo.data
+            
+            # Contatos opcionais
+            current_user.telefone_alternativo = form.telefone_alternativo.data
+            current_user.whatsapp = form.whatsapp.data
+            
+            # Ativar acesso completo
+            if current_user.completar_perfil():
+                db.session.commit()
+                flash('Perfil completado com sucesso! Agora você tem acesso total ao sistema.', 'success')
+                return redirect(url_for('usuario.dashboard'))
+            else:
+                flash('Erro ao completar perfil. Verifique os campos obrigatórios.', 'danger')
+                
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao salvar perfil: {str(e)}', 'danger')
+    
+    return render_template('usuario/completar_perfil.html', form=form)
+
 @usuario_bp.route('/dashboard')
 @login_required
 def dashboard():
+    # VERIFICAR ACESSO COMPLETO - SISTEMA DE ETAPAS
+    if not current_user.tem_acesso_completo():
+        flash('Complete seu perfil para ter acesso total ao sistema.', 'warning')
+        return redirect(url_for('usuario.completar_perfil'))
+    
     # Calcular estatísticas reais - VERSÃO CORRIGIDA E OTIMIZADA
     hoje = datetime.now().date()
     
@@ -73,6 +124,11 @@ def dashboard():
 @usuario_bp.route('/agendamentos')
 @login_required
 def agendamentos():
+    # VERIFICAR ACESSO COMPLETO - SISTEMA DE ETAPAS
+    if not current_user.tem_acesso_completo():
+        flash('Complete seu perfil para visualizar seus agendamentos.', 'warning')
+        return redirect(url_for('usuario.completar_perfil'))
+    
     agendamentos_lista = Agendamento.query.filter_by(user_id=current_user.id).order_by(Agendamento.data_agendamento.desc()).all()
     
     # Adicionar informação se pode cancelar para cada agendamento
@@ -86,6 +142,11 @@ def agendamentos():
 @usuario_bp.route('/novo-agendamento', methods=['GET', 'POST'])
 @login_required
 def novo_agendamento():
+    # VERIFICAR SE PODE AGENDAR - SISTEMA DE ETAPAS
+    if not current_user.pode_agendar():
+        flash('Complete seu perfil para poder fazer agendamentos.', 'warning')
+        return redirect(url_for('usuario.completar_perfil'))
+    
     form = AgendamentoForm()
 
     # Carregar docas disponíveis
@@ -159,6 +220,11 @@ def novo_agendamento():
 @usuario_bp.route('/agendamentos/<int:id>/cancelar', methods=['GET', 'POST'])
 @login_required
 def cancelar_agendamento(id):
+    # VERIFICAR ACESSO COMPLETO - SISTEMA DE ETAPAS
+    if not current_user.tem_acesso_completo():
+        flash('Complete seu perfil para cancelar agendamentos.', 'warning')
+        return redirect(url_for('usuario.completar_perfil'))
+    
     agendamento = Agendamento.query.get_or_404(id)
     
     # Verificar se o agendamento pertence ao usuário logado

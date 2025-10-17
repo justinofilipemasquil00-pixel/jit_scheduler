@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models import User
-from app.forms import RegistrationForm, RecuperacaoSenhaForm, RedefinirSenhaForm  # ATUALIZE ESTA LINHA
-from app.email import send_email_confirmacao, send_email_recuperacao_senha  # ADICIONE send_email_recuperacao_senha
+from app.forms import RegistrationForm, RecuperacaoSenhaForm, RedefinirSenhaForm, CompletarPerfilForm  # ADICIONE CompletarPerfilForm
+from app.email import send_email_confirmacao, send_email_recuperacao_senha
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -21,7 +21,9 @@ def login():
                 # Criar usuario admin se não existir
                 user = User(email=email, nome='Administrador', empresa='JIT', tipo='admin')
                 user.set_password(password)
-                user.email_confirmado = True  # Admin não precisa confirmar email
+                user.email_confirmado = True
+                user.perfil_completo = True  # Admin tem perfil completo
+                user.nivel_acesso = 'completo'  # Admin tem acesso completo
                 db.session.add(user)
                 db.session.commit()
             login_user(user)
@@ -34,7 +36,9 @@ def login():
                 # Criar usuario comum se não existir
                 user = User(email=email, nome='Usuário Teste', empresa='Teste Ltda', tipo='usuario')
                 user.set_password(password)
-                user.email_confirmado = True  # Usuário teste não precisa confirmar
+                user.email_confirmado = True
+                user.perfil_completo = True  # Usuário teste tem perfil completo
+                user.nivel_acesso = 'completo'  # Usuário teste tem acesso completo
                 db.session.add(user)
                 db.session.commit()
             login_user(user)
@@ -51,6 +55,12 @@ def login():
                 
             login_user(user)
             flash('Login realizado com sucesso!', 'success')
+            
+            # VERIFICAR SE PRECISA COMPLETAR PERFIL - SISTEMA DE ACESSO POR ETAPAS
+            if not user.tem_acesso_completo():
+                flash('Complete seu perfil para ter acesso total ao sistema.', 'info')
+                return redirect(url_for('usuario.completar_perfil'))
+            
             if user.is_admin():
                 return redirect(url_for('admin.dashboard'))
             else:
@@ -71,12 +81,14 @@ def register():
             flash('Este email já está cadastrado. Use outro email ou faça login.', 'danger')
             return render_template('auth/register.html', form=form)
         
-        # Criar novo usuário
+        # Criar novo usuário com acesso limitado inicial
         user = User(
             email=form.email.data,
             nome=form.nome.data,
             empresa=form.empresa.data,
-            tipo='usuario'  # Todos os novos usuários são usuários comuns
+            tipo='usuario',  # Todos os novos usuários são usuários comuns
+            perfil_completo=False,  # Novo usuário tem perfil incompleto
+            nivel_acesso='limitado'  # Novo usuário tem acesso limitado
         )
         user.set_password(form.password.data)
         

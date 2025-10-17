@@ -35,6 +35,18 @@ class User(UserMixin, db.Model):
     data_ultimo_acesso = db.Column(db.DateTime)
     ativo = db.Column(db.Boolean, default=True)
     
+    # NOVOS CAMPOS PARA SISTEMA DE ACESSO POR ETAPAS
+    perfil_completo = db.Column(db.Boolean, default=False)
+    nivel_acesso = db.Column(db.String(20), default='limitado')  # limitado, completo
+    
+    # NOVOS CAMPOS PARA SEGURANÇA E CONFIABILIDADE
+    telefone_verificado = db.Column(db.Boolean, default=False)
+    nuit_verificado = db.Column(db.Boolean, default=False)
+    empresa_validada = db.Column(db.Boolean, default=False)
+    pontuacao_confiabilidade = db.Column(db.Integer, default=100)
+    agendamentos_concluidos = db.Column(db.Integer, default=0)
+    agendamentos_cancelados = db.Column(db.Integer, default=0)
+    
     agendamentos = db.relationship('Agendamento', backref='usuario', lazy=True, cascade='all, delete-orphan')
 
     def set_password(self, password):
@@ -76,6 +88,82 @@ class User(UserMixin, db.Model):
         """Atualiza a data do último acesso"""
         self.data_ultimo_acesso = datetime.utcnow()
         db.session.commit()
+
+    # NOVOS MÉTODOS PARA SISTEMA DE ACESSO POR ETAPAS
+    def tem_acesso_completo(self):
+        """Verifica se o usuário tem acesso completo ao sistema"""
+        return self.nivel_acesso == 'completo' and self.perfil_completo
+
+    def verificar_campos_obrigatorios(self):
+        """Verifica se todos os campos obrigatórios do perfil estão preenchidos"""
+        campos_obrigatorios = [
+            self.telefone,
+            self.nuit,
+            self.genero,
+            self.data_nascimento,
+            self.cargo,
+            self.departamento,
+            self.tipo_empresa,
+            self.nuit_empresa,
+            self.provincia,
+            self.cidade,
+            self.bairro,
+            self.endereco_completo
+        ]
+        return all(campo is not None and str(campo).strip() != '' for campo in campos_obrigatorios)
+
+    def completar_perfil(self):
+        """Marca o perfil como completo e concede acesso total"""
+        if self.verificar_campos_obrigatorios():
+            self.perfil_completo = True
+            self.nivel_acesso = 'completo'
+            return True
+        return False
+
+    def get_nivel_acesso_display(self):
+        """Retorna a descrição do nível de acesso"""
+        return {
+            'limitado': 'Acesso Limitado',
+            'completo': 'Acesso Completo'
+        }.get(self.nivel_acesso, 'Acesso Limitado')
+
+    def pode_agendar(self):
+        """Verifica se o usuário pode fazer agendamentos"""
+        return self.tem_acesso_completo() and self.ativo
+
+    def pode_ver_dashboard(self):
+        """Verifica se o usuário pode acessar o dashboard completo"""
+        return self.tem_acesso_completo()
+
+    # NOVOS MÉTODOS PARA SEGURANÇA E CONFIABILIDADE
+    def calcular_confiabilidade(self):
+        """Calcula pontuação de confiabilidade baseada no histórico"""
+        base = 100
+        penalidade_cancelamentos = self.agendamentos_cancelados * 5
+        bonus_concluidos = self.agendamentos_concluidos * 2
+        
+        self.pontuacao_confiabilidade = max(0, base - penalidade_cancelamentos + bonus_concluidos)
+        return self.pontuacao_confiabilidade
+
+    def get_status_verificacao(self):
+        """Retorna o status de verificação do usuário"""
+        verificacoes = [
+            ('Email', self.email_confirmado),
+            ('Telefone', self.telefone_verificado),
+            ('NUIT', self.nuit_verificado),
+            ('Empresa', self.empresa_validada)
+        ]
+        return verificacoes
+
+    def get_nivel_verificacao(self):
+        """Retorna o nível de verificação (0-4)"""
+        return sum([self.email_confirmado, self.telefone_verificado, 
+                   self.nuit_verificado, self.empresa_validada])
+
+    def pode_acessar_recurso_avancado(self):
+        """Verifica se pode acessar recursos avançados"""
+        return (self.get_nivel_verificacao() >= 2 and 
+                self.pontuacao_confiabilidade >= 80)
 
     def __repr__(self):
         return f'User({self.email}, {self.nome})'
