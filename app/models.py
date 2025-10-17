@@ -43,6 +43,16 @@ class User(UserMixin, db.Model):
         self.email_confirmado = True
         self.token_confirmacao = None
 
+    # NOVOS MÉTODOS PARA RECUPERAÇÃO DE SENHA
+    def gerar_token_recuperacao(self):
+        """Gera um token único para recuperação de senha"""
+        self.token_confirmacao = secrets.token_urlsafe(32)
+        return self.token_confirmacao
+
+    def verificar_token_recuperacao(self, token):
+        """Verifica se o token de recuperação é válido"""
+        return secrets.compare_digest(self.token_confirmacao, token)
+
     def __repr__(self):
         return f'User({self.email}, {self.nome})'
 

@@ -2,8 +2,8 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models import User
-from app.forms import RegistrationForm
-from app.email import send_email_confirmacao  # ADICIONE ESTE IMPORT
+from app.forms import RegistrationForm, RecuperacaoSenhaForm, RedefinirSenhaForm  # ATUALIZE ESTA LINHA
+from app.email import send_email_confirmacao, send_email_recuperacao_senha  # ADICIONE send_email_recuperacao_senha
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -132,6 +132,56 @@ def reenviar_confirmacao():
         print(f"Erro ao reenviar email: {e}")
     
     return redirect(url_for('usuario.dashboard' if not current_user.is_admin() else 'admin.dashboard'))
+
+# NOVAS ROTAS PARA RECUPERAÇÃO DE SENHA
+@auth_bp.route('/recuperar-senha', methods=['GET', 'POST'])
+def recuperar_senha():
+    """Rota para solicitar recuperação de senha"""
+    form = RecuperacaoSenhaForm()
+    
+    if form.validate_on_submit():
+        email = form.email.data
+        user = User.query.filter_by(email=email).first()
+        
+        if user:
+            # Gerar token e enviar email
+            try:
+                user.gerar_token_recuperacao()
+                db.session.commit()
+                send_email_recuperacao_senha(user)
+                flash('Enviamos um email com instruções para redefinir sua senha.', 'info')
+            except Exception as e:
+                flash('Erro ao enviar email de recuperação. Tente novamente.', 'danger')
+                print(f"Erro ao enviar email: {e}")
+        else:
+            # Mesma mensagem para evitar enumeração de emails
+            flash('Se o email estiver cadastrado, enviaremos instruções para redefinir sua senha.', 'info')
+        
+        return redirect(url_for('auth.login'))
+    
+    return render_template('auth/recuperar_senha.html', form=form)
+
+@auth_bp.route('/redefinir-senha/<token>', methods=['GET', 'POST'])
+def recuperar_senha_token(token):
+    """Rota para redefinir a senha usando o token"""
+    user = User.query.filter_by(token_confirmacao=token).first()
+    
+    if not user:
+        flash('Link de recuperação inválido ou expirado.', 'danger')
+        return redirect(url_for('auth.recuperar_senha'))
+    
+    form = RedefinirSenhaForm()
+    
+    if form.validate_on_submit():
+        # Redefinir senha
+        user.set_password(form.password.data)
+        user.token_confirmacao = None  # Limpar token
+        db.session.commit()
+        
+        flash('Senha redefinida com sucesso! Faça login com a nova senha.', 'success')
+        return redirect(url_for('auth.login'))
+    
+    return render_template('auth/redefinir_senha.html', form=form, token=token)
 
 @auth_bp.route('/logout')
 @login_required

@@ -75,3 +75,30 @@ class CancelamentoForm(FlaskForm):
                                       })
     submit = SubmitField('Confirmar Cancelamento', 
                         render_kw={"class": "btn btn-danger"})
+
+# NOVOS FORMULÁRIOS PARA RECUPERAÇÃO DE SENHA
+class RecuperacaoSenhaForm(FlaskForm):
+    email = StringField('Email', 
+                       validators=[DataRequired(), Email()],
+                       render_kw={
+                           "placeholder": "seu@email.com",
+                           "class": "form-control"
+                       })
+    submit = SubmitField('Enviar Link de Recuperação',
+                        render_kw={"class": "btn btn-primary"})
+
+class RedefinirSenhaForm(FlaskForm):
+    password = PasswordField('Nova Senha', 
+                            validators=[DataRequired(), Length(min=6)],
+                            render_kw={
+                                "placeholder": "Mínimo 6 caracteres",
+                                "class": "form-control"
+                            })
+    confirm_password = PasswordField('Confirmar Nova Senha', 
+                                    validators=[DataRequired(), EqualTo('password')],
+                                    render_kw={
+                                        "placeholder": "Digite a senha novamente",
+                                        "class": "form-control"
+                                    })
+    submit = SubmitField('Redefinir Senha',
+                        render_kw={"class": "btn btn-success"})

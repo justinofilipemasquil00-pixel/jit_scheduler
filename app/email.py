@@ -150,7 +150,6 @@ def send_agendamento_rejeitado(agendamento):
         html_body=html_body
     )
 
-# ADICIONE ESTA NOVA FUNÇÃO NO FINAL
 def send_email_confirmacao(user):
     """Envia email de confirmação de conta"""
     subject = current_app.config['EMAIL_SUBJECT_PREFIX'] + 'Confirme sua Conta'
@@ -185,3 +184,42 @@ def send_email_confirmacao(user):
         text_body=text_body,
         html_body=html_body
     )
+
+# NOVA FUNÇÃO PARA RECUPERAÇÃO DE SENHA
+def send_email_recuperacao_senha(user):
+    """Envia email para recuperação de senha"""
+    subject = current_app.config['EMAIL_SUBJECT_PREFIX'] + 'Recuperação de Senha'
+
+    # Gerar token de recuperação
+    token = user.gerar_token_recuperacao()
+    
+    # Corpo do email em texto simples
+    text_body = f"""
+    Prezado(a) {user.nome},
+
+    Recebemos uma solicitação para redefinir a senha da sua conta no Sistema JIT.
+
+    Para redefinir sua senha, clique no link abaixo:
+
+    {url_for('auth.recuperar_senha_token', token=token, _external=True)}
+
+    Este link expirará em 1 hora.
+
+    Se você não solicitou a redefinição de senha, por favor ignore este email.
+
+    Atenciosamente,
+    Equipe Sistema JIT
+    """
+
+    # Corpo do email em HTML
+    html_body = render_template('email/recuperar_senha.html',
+                               user=user, token=token)
+
+    send_email(
+        subject=subject,
+        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+        recipients=[user.email],
+        text_body=text_body,
+        html_body=html_body
+    )
+    
