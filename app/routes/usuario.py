@@ -1,10 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
 from flask_login import login_required, current_user
-from app.models import Agendamento, Doca
-from app.forms import AgendamentoForm, CancelamentoForm
+from app.models import Agendamento, Doca, User
+from app.forms import AgendamentoForm, CancelamentoForm, EditarPerfilForm, AlterarSenhaForm
 from app import db
 from datetime import datetime, timedelta
-from app.email import send_agendamento_cancelamento, send_novo_agendamento_admin  # ← ADICIONE ESTA LINHA
+from app.email import send_agendamento_cancelamento, send_novo_agendamento_admin
 
 usuario_bp = Blueprint('usuario', __name__)
 
@@ -193,3 +193,83 @@ def cancelar_agendamento(id):
     return render_template('usuario/cancelar_agendamento.html', 
                          agendamento=agendamento, 
                          form=form)
+
+# NOVAS ROTAS PARA GERENCIAMENTO DE PERFIL
+@usuario_bp.route('/perfil')
+@login_required
+def perfil():
+    """Página para visualizar o perfil do usuário"""
+    # Atualizar data do último acesso
+    current_user.atualizar_ultimo_acesso()
+    return render_template('usuario/perfil.html')
+
+@usuario_bp.route('/perfil/editar', methods=['GET', 'POST'])
+@login_required
+def editar_perfil():
+    """Página para editar o perfil do usuário"""
+    form = EditarPerfilForm(obj=current_user)
+    
+    if form.validate_on_submit():
+        try:
+            # Atualizar campos básicos
+            current_user.nome = form.nome.data
+            current_user.email = form.email.data
+            current_user.empresa = form.empresa.data
+            
+            # Dados pessoais
+            current_user.telefone = form.telefone.data
+            current_user.nuit = form.nuit.data
+            current_user.genero = form.genero.data
+            current_user.data_nascimento = form.data_nascimento.data
+            
+            # Dados profissionais
+            current_user.cargo = form.cargo.data
+            current_user.departamento = form.departamento.data
+            current_user.tipo_empresa = form.tipo_empresa.data
+            current_user.nuit_empresa = form.nuit_empresa.data
+            
+            # Dados geográficos
+            current_user.provincia = form.provincia.data
+            current_user.cidade = form.cidade.data
+            current_user.bairro = form.bairro.data
+            current_user.endereco_completo = form.endereco_completo.data
+            
+            # Contatos adicionais
+            current_user.telefone_alternativo = form.telefone_alternativo.data
+            current_user.whatsapp = form.whatsapp.data
+            
+            db.session.commit()
+            flash('Perfil atualizado com sucesso!', 'success')
+            return redirect(url_for('usuario.perfil'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao atualizar perfil: {str(e)}', 'danger')
+    
+    return render_template('usuario/editar_perfil.html', form=form)
+
+@usuario_bp.route('/perfil/alterar-senha', methods=['GET', 'POST'])
+@login_required
+def alterar_senha():
+    """Página para alterar a senha do usuário"""
+    form = AlterarSenhaForm()
+    
+    if form.validate_on_submit():
+        try:
+            # Verificar senha atual
+            if not current_user.check_password(form.senha_atual.data):
+                flash('Senha atual incorreta!', 'danger')
+                return render_template('usuario/alterar_senha.html', form=form)
+            
+            # Atualizar senha
+            current_user.set_password(form.nova_senha.data)
+            db.session.commit()
+            
+            flash('Senha alterada com sucesso!', 'success')
+            return redirect(url_for('usuario.perfil'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao alterar senha: {str(e)}', 'danger')
+    
+    return render_template('usuario/alterar_senha.html', form=form)

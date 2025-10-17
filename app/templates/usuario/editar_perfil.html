@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}Editar Perfil - Sistema JIT{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-edit me-2"></i>Editar Perfil
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Mensagens -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="row">
+                        <!-- Informações Básicas -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">
+                                <i class="fas fa-id-card me-2"></i>Informações Básicas
+                            </h5>
+                            
+                            <div class="mb-3">
+                                {{ form.nome.label(class="form-label") }}
+                                {{ form.nome(class="form-control") }}
+                                {% if form.nome.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.nome.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.email.label(class="form-label") }}
+                                {{ form.email(class="form-control") }}
+                                {% if form.email.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.email.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.empresa.label(class="form-label") }}
+                                {{ form.empresa(class="form-control") }}
+                                {% if form.empresa.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.empresa.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.telefone.label(class="form-label") }}
+                                {{ form.telefone(class="form-control") }}
+                                <small class="form-text text-muted">Formato: +258 84 123 4567</small>
+                                {% if form.telefone.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.telefone.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.nuit.label(class="form-label") }}
+                                {{ form.nuit(class="form-control") }}
+                                <small class="form-text text-muted">NUIT pessoal (9 dígitos)</small>
+                                {% if form.nuit.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.nuit.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Dados Pessoais -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">
+                                <i class="fas fa-user-circle me-2"></i>Dados Pessoais
+                            </h5>
+
+                            <div class="mb-3">
+                                {{ form.genero.label(class="form-label") }}
+                                {{ form.genero(class="form-control") }}
+                                {% if form.genero.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.genero.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.data_nascimento.label(class="form-label") }}
+                                {{ form.data_nascimento(class="form-control") }}
+                                {% if form.data_nascimento.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.data_nascimento.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.cargo.label(class="form-label") }}
+                                {{ form.cargo(class="form-control") }}
+                                <small class="form-text text-muted">Ex: Gestor Logístico, Operador, Motorista</small>
+                                {% if form.cargo.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.cargo.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.departamento.label(class="form-label") }}
+                                {{ form.departamento(class="form-control") }}
+                                <small class="form-text text-muted">Ex: Logística, Compras, Distribuição</small>
+                                {% if form.departamento.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.departamento.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <!-- Dados Empresariais -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">
+                                <i class="fas fa-building me-2"></i>Dados Empresariais
+                            </h5>
+
+                            <div class="mb-3">
+                                {{ form.tipo_empresa.label(class="form-label") }}
+                                {{ form.tipo_empresa(class="form-control") }}
+                                {% if form.tipo_empresa.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.tipo_empresa.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.nuit_empresa.label(class="form-label") }}
+                                {{ form.nuit_empresa(class="form-control") }}
+                                <small class="form-text text-muted">NUIT da empresa (9 dígitos)</small>
+                                {% if form.nuit_empresa.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.nuit_empresa.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Dados Geográficos -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">
+                                <i class="fas fa-map-marker-alt me-2"></i>Localização
+                            </h5>
+
+                            <div class="mb-3">
+                                {{ form.provincia.label(class="form-label") }}
+                                {{ form.provincia(class="form-control") }}
+                                {% if form.provincia.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.provincia.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.cidade.label(class="form-label") }}
+                                {{ form.cidade(class="form-control") }}
+                                <small class="form-text text-muted">Ex: Maputo, Matola, Beira, Nampula</small>
+                                {% if form.cidade.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.cidade.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.bairro.label(class="form-label") }}
+                                {{ form.bairro(class="form-control") }}
+                                {% if form.bairro.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.bairro.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mt-4">
+                        <!-- Contatos Adicionais -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">
+                                <i class="fas fa-phone me-2"></i>Contatos Adicionais
+                            </h5>
+
+                            <div class="mb-3">
+                                {{ form.telefone_alternativo.label(class="form-label") }}
+                                {{ form.telefone_alternativo(class="form-control") }}
+                                <small class="form-text text-muted">Telefone para emergências</small>
+                                {% if form.telefone_alternativo.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.telefone_alternativo.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+
+                            <div class="mb-3">
+                                {{ form.whatsapp.label(class="form-label") }}
+                                {{ form.whatsapp(class="form-control") }}
+                                {% if form.whatsapp.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.whatsapp.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Endereço Completo -->
+                        <div class="col-md-6">
+                            <h5 class="border-bottom pb-2 mb-3 text-primary">
+                                <i class="fas fa-home me-2"></i>Endereço Completo
+                            </h5>
+
+                            <div class="mb-3">
+                                {{ form.endereco_completo.label(class="form-label") }}
+                                {{ form.endereco_completo(class="form-control") }}
+                                <small class="form-text text-muted">Endereço completo para referência</small>
+                                {% if form.endereco_completo.errors %}
+                                    <div class="text-danger">
+                                        {% for error in form.endereco_completo.errors %}
+                                            <small>{{ error }}</small>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="d-flex justify-content-between">
+                                <a href="{{ url_for('usuario.perfil') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                </a>
+                                {{ form.submit(class="btn btn-primary") }}
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

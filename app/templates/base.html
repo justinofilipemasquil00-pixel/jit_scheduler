@@ -94,9 +94,18 @@
                                     </small>
                                 </span></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="{{ url_for('auth.logout') }}">
-                                    <i class="fas fa-sign-out-alt"></i> Sair
-                                </a></li>
+                                <!-- ADICIONE ESTE LINK PARA MEU PERFIL -->
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('usuario.perfil') }}">
+                                        <i class="fas fa-user-cog me-2"></i>Meu Perfil
+                                    </a>
+                                </li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <a class="dropdown-item" href="{{ url_for('auth.logout') }}">
+                                        <i class="fas fa-sign-out-alt me-2"></i>Sair
+                                    </a>
+                                </li>
                             </ul>
                         </li>
                     {% else %}

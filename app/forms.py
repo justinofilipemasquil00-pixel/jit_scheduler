@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateTimeField, IntegerField
+from wtforms import StringField, PasswordField, SubmitField, SelectField, TextAreaField, DateTimeField, IntegerField, DateField
 from wtforms.validators import DataRequired, Email, Length, ValidationError, Optional
 from app.models import Doca, User
 from datetime import datetime
@@ -102,3 +102,136 @@ class RedefinirSenhaForm(FlaskForm):
                                     })
     submit = SubmitField('Redefinir Senha',
                         render_kw={"class": "btn btn-success"})
+
+# NOVOS FORMULÁRIOS PARA GERENCIAMENTO DE PERFIL
+class EditarPerfilForm(FlaskForm):
+    nome = StringField('Nome Completo', validators=[DataRequired(), Length(min=2, max=100)],
+                      render_kw={"class": "form-control"})
+    email = StringField('Email', validators=[DataRequired(), Email()],
+                       render_kw={"class": "form-control"})
+    empresa = StringField('Empresa', validators=[DataRequired(), Length(min=2, max=100)],
+                         render_kw={"class": "form-control"})
+    
+    # Dados Pessoais
+    telefone = StringField('Telefone',
+                          render_kw={
+                              "placeholder": "+258 84 123 4567",
+                              "class": "form-control"
+                          })
+    nuit = StringField('NUIT Pessoal',
+                      render_kw={
+                          "placeholder": "123456789",
+                          "class": "form-control"
+                      })
+    genero = SelectField('Gênero',
+                        choices=[
+                            ('', 'Selecione o gênero'),
+                            ('masculino', 'Masculino'),
+                            ('feminino', 'Feminino'),
+                            ('outro', 'Outro')
+                        ],
+                        render_kw={"class": "form-control"})
+    data_nascimento = DateField('Data de Nascimento',
+                               format='%Y-%m-%d',
+                               render_kw={
+                                   "class": "form-control",
+                                   "type": "date"
+                               })
+    
+    # Dados Profissionais
+    cargo = StringField('Cargo/Função',
+                       render_kw={
+                           "placeholder": "Gestor Logístico, Operador, etc.",
+                           "class": "form-control"
+                       })
+    departamento = StringField('Departamento',
+                              render_kw={
+                                  "placeholder": "Logística, Compras, Distribuição",
+                                  "class": "form-control"
+                              })
+    tipo_empresa = SelectField('Tipo de Empresa',
+                              choices=[
+                                  ('', 'Selecione o tipo de empresa'),
+                                  ('importadora', 'Importadora'),
+                                  ('exportadora', 'Exportadora'),
+                                  ('transportadora', 'Transportadora'),
+                                  ('comercio', 'Comércio'),
+                                  ('industria', 'Indústria'),
+                                  ('outro', 'Outro')
+                              ],
+                              render_kw={"class": "form-control"})
+    nuit_empresa = StringField('NUIT da Empresa',
+                              render_kw={
+                                  "placeholder": "123456789",
+                                  "class": "form-control"
+                              })
+    
+    # Dados Geográficos
+    provincia = SelectField('Província',
+                           choices=[
+                               ('', 'Selecione a província'),
+                               ('maputo', 'Maputo'),
+                               ('gaza', 'Gaza'),
+                               ('inhambane', 'Inhambane'),
+                               ('sofala', 'Sofala'),
+                               ('manica', 'Manica'),
+                               ('tete', 'Tete'),
+                               ('zambezia', 'Zambézia'),
+                               ('nampula', 'Nampula'),
+                               ('cabo_delgado', 'Cabo Delgado'),
+                               ('niassa', 'Niassa')
+                           ],
+                           render_kw={"class": "form-control"})
+    cidade = StringField('Cidade',
+                        render_kw={
+                            "placeholder": "Maputo, Matola, Beira, etc.",
+                            "class": "form-control"
+                        })
+    bairro = StringField('Bairro',
+                        render_kw={
+                            "placeholder": "Nome do bairro",
+                            "class": "form-control"
+                        })
+    endereco_completo = TextAreaField('Endereço Completo',
+                                     render_kw={
+                                         "rows": 3,
+                                         "placeholder": "Endereço completo para referência",
+                                         "class": "form-control"
+                                     })
+    
+    # Contatos Adicionais
+    telefone_alternativo = StringField('Telefone Alternativo',
+                                      render_kw={
+                                          "placeholder": "+258 86 123 4567",
+                                          "class": "form-control"
+                                      })
+    whatsapp = StringField('WhatsApp',
+                          render_kw={
+                              "placeholder": "+258 84 123 4567",
+                              "class": "form-control"
+                          })
+    
+    submit = SubmitField('Atualizar Perfil',
+                        render_kw={"class": "btn btn-primary"})
+
+class AlterarSenhaForm(FlaskForm):
+    senha_atual = PasswordField('Senha Atual',
+                               validators=[DataRequired()],
+                               render_kw={
+                                   "placeholder": "Digite sua senha atual",
+                                   "class": "form-control"
+                               })
+    nova_senha = PasswordField('Nova Senha',
+                              validators=[DataRequired(), Length(min=6)],
+                              render_kw={
+                                  "placeholder": "Mínimo 6 caracteres",
+                                  "class": "form-control"
+                              })
+    confirmar_senha = PasswordField('Confirmar Nova Senha',
+                                   validators=[DataRequired(), EqualTo('nova_senha')],
+                                   render_kw={
+                                       "placeholder": "Digite a nova senha novamente",
+                                       "class": "form-control"
+                                   })
+    submit = SubmitField('Alterar Senha',
+                        render_kw={"class": "btn btn-warning"})

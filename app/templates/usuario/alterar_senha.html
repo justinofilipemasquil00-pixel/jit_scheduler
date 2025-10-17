@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Alterar Senha - Sistema JIT{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-key me-2"></i>Alterar Senha
+                </h4>
+            </div>
+            <div class="card-body">
+                <!-- Mensagens -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <form method="POST">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-3">
+                        {{ form.senha_atual.label(class="form-label") }}
+                        {{ form.senha_atual(class="form-control") }}
+                        {% if form.senha_atual.errors %}
+                            <div class="text-danger">
+                                {% for error in form.senha_atual.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.nova_senha.label(class="form-label") }}
+                        {{ form.nova_senha(class="form-control") }}
+                        <small class="form-text text-muted">Mínimo 6 caracteres</small>
+                        {% if form.nova_senha.errors %}
+                            <div class="text-danger">
+                                {% for error in form.nova_senha.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-4">
+                        {{ form.confirmar_senha.label(class="form-label") }}
+                        {{ form.confirmar_senha(class="form-control") }}
+                        {% if form.confirmar_senha.errors %}
+                            <div class="text-danger">
+                                {% for error in form.confirmar_senha.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Dicas de Segurança -->
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-shield-alt me-2"></i>Dicas para uma senha segura:
+                        </h6>
+                        <ul class="mb-0">
+                            <li>Use pelo menos 6 caracteres</li>
+                            <li>Combine letras maiúsculas e minúsculas</li>
+                            <li>Inclua números e símbolos especiais</li>
+                            <li>Evite senhas óbvias como "123456"</li>
+                        </ul>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('usuario.perfil') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-2"></i>Voltar ao Perfil
+                        </a>
+                        {{ form.submit(class="btn btn-warning") }}
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

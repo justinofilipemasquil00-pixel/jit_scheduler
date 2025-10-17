@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+
+{% block title %}Meu Perfil - Sistema JIT{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h4 class="card-title mb-0">
+                    <i class="fas fa-user me-2"></i>Meu Perfil
+                </h4>
+                <div>
+                    <a href="{{ url_for('usuario.editar_perfil') }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-edit me-1"></i>Editar Perfil
+                    </a>
+                    <a href="{{ url_for('usuario.alterar_senha') }}" class="btn btn-warning btn-sm">
+                        <i class="fas fa-key me-1"></i>Alterar Senha
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <!-- Mensagens -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="row">
+                    <!-- Informações Básicas -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-id-card me-2"></i>Informações Básicas
+                        </h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="40%">Nome:</th>
+                                <td>{{ current_user.nome }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email:</th>
+                                <td>{{ current_user.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Empresa:</th>
+                                <td>{{ current_user.empresa or 'Não informado' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Telefone:</th>
+                                <td>{{ current_user.telefone or 'Não informado' }}</td>
+                            </tr>
+                            <tr>
+                                <th>NUIT:</th>
+                                <td>{{ current_user.nuit or 'Não informado' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Dados Pessoais -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-user-circle me-2"></i>Dados Pessoais
+                        </h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="40%">Gênero:</th>
+                                <td>
+                                    {% if current_user.genero == 'masculino' %}
+                                        Masculino
+                                    {% elif current_user.genero == 'feminino' %}
+                                        Feminino
+                                    {% elif current_user.genero == 'outro' %}
+                                        Outro
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Data Nascimento:</th>
+                                <td>
+                                    {% if current_user.data_nascimento %}
+                                        {{ current_user.data_nascimento.strftime('%d/%m/%Y') }}
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Cargo:</th>
+                                <td>{{ current_user.cargo or 'Não informado' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Departamento:</th>
+                                <td>{{ current_user.departamento or 'Não informado' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <!-- Dados Empresariais -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-building me-2"></i>Dados Empresariais
+                        </h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="40%">Tipo Empresa:</th>
+                                <td>
+                                    {% if current_user.tipo_empresa == 'importadora' %}
+                                        Importadora
+                                    {% elif current_user.tipo_empresa == 'exportadora' %}
+                                        Exportadora
+                                    {% elif current_user.tipo_empresa == 'transportadora' %}
+                                        Transportadora
+                                    {% elif current_user.tipo_empresa == 'comercio' %}
+                                        Comércio
+                                    {% elif current_user.tipo_empresa == 'industria' %}
+                                        Indústria
+                                    {% elif current_user.tipo_empresa == 'outro' %}
+                                        Outro
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>NUIT Empresa:</th>
+                                <td>{{ current_user.nuit_empresa or 'Não informado' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Dados Geográficos -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-map-marker-alt me-2"></i>Localização
+                        </h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="40%">Província:</th>
+                                <td>
+                                    {% if current_user.provincia == 'maputo' %}
+                                        Maputo
+                                    {% elif current_user.provincia == 'gaza' %}
+                                        Gaza
+                                    {% elif current_user.provincia == 'inhambane' %}
+                                        Inhambane
+                                    {% elif current_user.provincia == 'sofala' %}
+                                        Sofala
+                                    {% elif current_user.provincia == 'manica' %}
+                                        Manica
+                                    {% elif current_user.provincia == 'tete' %}
+                                        Tete
+                                    {% elif current_user.provincia == 'zambezia' %}
+                                        Zambézia
+                                    {% elif current_user.provincia == 'nampula' %}
+                                        Nampula
+                                    {% elif current_user.provincia == 'cabo_delgado' %}
+                                        Cabo Delgado
+                                    {% elif current_user.provincia == 'niassa' %}
+                                        Niassa
+                                    {% else %}
+                                        Não informado
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Cidade:</th>
+                                <td>{{ current_user.cidade or 'Não informado' }}</td>
+                            </tr>
+                            <tr>
+                                <th>Bairro:</th>
+                                <td>{{ current_user.bairro or 'Não informado' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="row mt-4">
+                    <!-- Contatos Adicionais -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-phone me-2"></i>Contatos
+                        </h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="40%">Telefone Alternativo:</th>
+                                <td>{{ current_user.telefone_alternativo or 'Não informado' }}</td>
+                            </tr>
+                            <tr>
+                                <th>WhatsApp:</th>
+                                <td>{{ current_user.whatsapp or 'Não informado' }}</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- Informações do Sistema -->
+                    <div class="col-md-6">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-info-circle me-2"></i>Informações do Sistema
+                        </h5>
+                        <table class="table table-sm">
+                            <tr>
+                                <th width="40%">Data de Criação:</th>
+                                <td>{{ current_user.data_criacao.strftime('%d/%m/%Y às %H:%M') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Último Acesso:</th>
+                                <td>
+                                    {% if current_user.data_ultimo_acesso %}
+                                        {{ current_user.data_ultimo_acesso.strftime('%d/%m/%Y às %H:%M') }}
+                                    {% else %}
+                                        Primeiro acesso
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Email Confirmado:</th>
+                                <td>
+                                    {% if current_user.email_confirmado %}
+                                        <span class="badge bg-success">Sim</span>
+                                    {% else %}
+                                        <span class="badge bg-warning">Não</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Endereço Completo -->
+                {% if current_user.endereco_completo %}
+                <div class="row mt-4">
+                    <div class="col-12">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="fas fa-home me-2"></i>Endereço Completo
+                        </h5>
+                        <div class="bg-light p-3 rounded">
+                            {{ current_user.endereco_completo }}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar com ações rápidas -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-cogs me-2"></i>Ações Rápidas
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-2">
+                    <a href="{{ url_for('usuario.editar_perfil') }}" class="btn btn-primary">
+                        <i class="fas fa-edit me-2"></i>Editar Perfil
+                    </a>
+                    <a href="{{ url_for('usuario.alterar_senha') }}" class="btn btn-warning">
+                        <i class="fas fa-key me-2"></i>Alterar Senha
+                    </a>
+                    <a href="{{ url_for('usuario.dashboard') }}" class="btn btn-outline-secondary">
+                        <i class="fas fa-tachometer-alt me-2"></i>Voltar ao Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status da Conta -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-shield-alt me-2"></i>Status da Conta
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="mb-2">
+                    <strong>Email:</strong>
+                    {% if current_user.email_confirmado %}
+                        <span class="badge bg-success float-end">Verificado</span>
+                    {% else %}
+                        <span class="badge bg-warning float-end">Não verificado</span>
+                    {% endif %}
+                </div>
+                <div class="mb-2">
+                    <strong>Conta:</strong>
+                    {% if current_user.ativo %}
+                        <span class="badge bg-success float-end">Ativa</span>
+                    {% else %}
+                        <span class="badge bg-danger float-end">Inativa</span>
+                    {% endif %}
+                </div>
+                <div>
+                    <strong>Tipo:</strong>
+                    <span class="badge bg-info float-end">{{ current_user.tipo.title() }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

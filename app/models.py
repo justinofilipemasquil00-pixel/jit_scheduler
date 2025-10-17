@@ -17,6 +17,24 @@ class User(UserMixin, db.Model):
     email_confirmado = db.Column(db.Boolean, default=False)
     token_confirmacao = db.Column(db.String(100))
     
+    # NOVOS CAMPOS PARA PERFIL PROFISSIONAL (MOÇAMBIQUE)
+    telefone = db.Column(db.String(20))
+    nuit = db.Column(db.String(9))  # NUIT pessoal (9 dígitos)
+    genero = db.Column(db.String(20))
+    data_nascimento = db.Column(db.Date)
+    cargo = db.Column(db.String(50))
+    departamento = db.Column(db.String(50))
+    tipo_empresa = db.Column(db.String(50))
+    nuit_empresa = db.Column(db.String(9))  # NUIT da empresa
+    provincia = db.Column(db.String(50))
+    cidade = db.Column(db.String(50))
+    bairro = db.Column(db.String(100))
+    endereco_completo = db.Column(db.Text)
+    telefone_alternativo = db.Column(db.String(20))
+    whatsapp = db.Column(db.String(20))
+    data_ultimo_acesso = db.Column(db.DateTime)
+    ativo = db.Column(db.Boolean, default=True)
+    
     agendamentos = db.relationship('Agendamento', backref='usuario', lazy=True, cascade='all, delete-orphan')
 
     def set_password(self, password):
@@ -52,6 +70,12 @@ class User(UserMixin, db.Model):
     def verificar_token_recuperacao(self, token):
         """Verifica se o token de recuperação é válido"""
         return secrets.compare_digest(self.token_confirmacao, token)
+
+    # NOVO MÉTODO PARA ATUALIZAR DATA DE ÚLTIMO ACESSO
+    def atualizar_ultimo_acesso(self):
+        """Atualiza a data do último acesso"""
+        self.data_ultimo_acesso = datetime.utcnow()
+        db.session.commit()
 
     def __repr__(self):
         return f'User({self.email}, {self.nome})'
