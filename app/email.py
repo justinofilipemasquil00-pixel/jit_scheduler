@@ -1,5 +1,5 @@
 from flask_mail import Message
-from flask import render_template, current_app
+from flask import render_template, current_app, url_for  # ADICIONE url_for AQUI
 from app import mail
 from threading import Thread
 
@@ -146,6 +146,42 @@ def send_agendamento_rejeitado(agendamento):
         subject=subject,
         sender=current_app.config['MAIL_DEFAULT_SENDER'],
         recipients=[agendamento.usuario.email],
+        text_body=text_body,
+        html_body=html_body
+    )
+
+# ADICIONE ESTA NOVA FUNÇÃO NO FINAL
+def send_email_confirmacao(user):
+    """Envia email de confirmação de conta"""
+    subject = current_app.config['EMAIL_SUBJECT_PREFIX'] + 'Confirme sua Conta'
+
+    # Gerar token de confirmação
+    token = user.gerar_token_confirmacao()
+    
+    # Corpo do email em texto simples
+    text_body = f"""
+    Prezado(a) {user.nome},
+
+    Bem-vindo ao Sistema JIT!
+
+    Para confirmar sua conta, clique no link abaixo:
+
+    {url_for('auth.confirmar_email', token=token, _external=True)}
+
+    Se você não criou esta conta, por favor ignore este email.
+
+    Atenciosamente,
+    Equipe Sistema JIT
+    """
+
+    # Corpo do email em HTML
+    html_body = render_template('email/confirmar_conta.html',
+                               user=user, token=token)
+
+    send_email(
+        subject=subject,
+        sender=current_app.config['MAIL_DEFAULT_SENDER'],
+        recipients=[user.email],
         text_body=text_body,
         html_body=html_body
     )
